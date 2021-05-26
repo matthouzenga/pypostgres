@@ -8,7 +8,7 @@ pDatabase = os.getenv('database-name')
 
 @app.route('/')
 def index():
-    out_string = 'database: ' + pDatabase + 'user: ' + pUser + ' password: ' + pPassword
-    return 'Hello, Web App with Python Flask!'
+    out_string = 'version 3 - database: ' + pDatabase + 'user: ' + pUser + ' password: ' + pPassword
+    return out_string
 
 app.run(host='0.0.0.0', port=5000)
