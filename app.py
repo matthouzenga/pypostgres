@@ -19,9 +19,9 @@ def index():
     cur = conn.cursor()
     cur.execute('SELECT * FROM sample')
 
-    conn.close()    
-
     return_row = cur.fetchone()
+
+    conn.close()    
 
     out_string = 'row 1: ' + return_row[0] + ' ' + str(return_row[1])
     return out_string
