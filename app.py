@@ -41,12 +41,8 @@ session = Session()
 base.metadata.create_all(db)
 
 
-@app.route('/')
+@app.route('/', methods=["POST", "GET"])
 def index():
-    return redirect("/base")
-
-@app.route('/base', methods=["POST", "GET"])
-def base():
     if request.method == "POST":
        in_name = request.form["name"]
        in_machinetype = request.form["machinetype"]
@@ -63,11 +59,11 @@ def base():
        session.add(new_storage)
        session.commit()
 
-       return redirect("/base", code=302)
+       return redirect("/", code=302)
 
     else:   #GET request
        storage = session.query(Storage)
 
        return render_template('base.html',storage=storage)
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=8080)
