@@ -10,17 +10,17 @@ from sqlalchemy.orm import sessionmaker
 app = Flask(__name__)
 
 #Check if NOTCONTAINER environmental variable set by user
-SECRET_KEY = os.environ.get('NOTCONTAINER', False)
+#AM_I_LOCAL = os.environ.get('NOTCONTAINER', False)
   #If not in container, get DB info from regular env variables
-if SECRET_KEY:
-    pUser = os.getenv('DBUSER')
-    pPassword = os.getenv('DBPASSWORD')
-    pDatabase = os.getenv('DBNAME')
+#if AM_I_LOCAL:
+#    pUser = os.getenv('DBUSER')
+#    pPassword = os.getenv('DBPASSWORD')
+#    pDatabase = os.getenv('DBNAME')
   #If in container, use the standard DB env variables set by OpenShift
-else:
-    pUser = os.getenv('database-user')
-    pPassword = os.getenv('database-password')
-    pDatabase = os.getenv('database-name')
+#else:
+pUser = os.getenv('database-user')
+pPassword = os.getenv('database-password')
+pDatabase = os.getenv('database-name')
 
 db_string = "postgres://" + pUser + ":" + pPassword + "@postgresql:5432/" + pDatabase
 
