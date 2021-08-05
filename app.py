@@ -16,11 +16,24 @@ if AM_I_LOCAL:
     pUser = os.getenv('DBUSER')
     pPassword = os.getenv('DBPASSWORD')
     pDatabase = os.getenv('DBNAME')
+    #get s3 bucket info
+    pBucketHost = os.getenv('BUCKETHOST')
+    pBucketName = os.getenv('BUCKETNAME')
+    pBucketPort = os.getenv('BUCKETPORT')
+    pBucketAccessKey = os.getenv('BUCKETACCESSKEY')
+    pBucketSecretKey = os.getenv('BUCKETSECRETKEY')
   #If in container, use the standard DB env variables set by OpenShift
 else:
     pUser = os.getenv('database-user')
     pPassword = os.getenv('database-password')
     pDatabase = os.getenv('database-name')
+    pBucketHost = os.getenv('BUCKET_HOST')
+    pBucketName = os.getenv('BUCKET_NAME')
+    pBucketPort = os.getenv('BUCKET_PORT')
+    pBucketAccessKey = os.getenv('AWS_ACCESS_KEY_ID')
+    pBucketSecretKey = os.getenv('AWS_SECRET_ACCESS_KEY')
+
+print('Found Bucket = ',pBucketName)
 
 db_string = "postgresql://" + pUser + ":" + pPassword + "@postgresql:5432/" + pDatabase
 
