@@ -33,7 +33,7 @@ else:
     pBucketAccessKey = os.getenv('AWS_ACCESS_KEY_ID')
     pBucketSecretKey = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-print('Found Bucket = ',pBucketName)
+
 
 db_string = "postgresql://" + pUser + ":" + pPassword + "@postgresql:5432/" + pDatabase
 
@@ -76,7 +76,7 @@ def index():
 
     else:   #GET request
        storage = session.query(Storage)
-
+       print('GET, writing Bucket = ',pBucketName)
        return render_template('base.html',storage=storage)
 
 app.run(host='0.0.0.0', port=8080)
