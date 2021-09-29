@@ -6,6 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import boto3
+import botocore
 
 app = Flask(__name__)
 
@@ -33,7 +35,17 @@ else:
     pBucketAccessKey = os.getenv('AWS_ACCESS_KEY_ID')
     pBucketSecretKey = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-
+    #connect to object bucket
+bucket_name = 'comms-architect-s3-ocp'
+bucket_host = 's3.us-south.cloud-object-storage.appdomain.cloud'
+access_key = pBucketAccessKey
+secret_key = pBucketSecretKey
+endpoint_url = 'https:://' + str(bucket_host)
+#connection = boto3.client('s3',
+#    verify=False,
+#    endpoint_url=endpoint_url,
+#    aws_access_key_id=access_key,
+#    aws_secret_access_key=secret_key)
 
 db_string = "postgresql://" + pUser + ":" + pPassword + "@postgresql:5432/" + pDatabase
 
@@ -61,10 +73,17 @@ def index():
        in_machinetype = request.form["machinetype"]
        in_model = request.form["model"]
        in_year = request.form["year"]
+       in_file = request.files["file1"]
+
        print('Name: ',in_name)
        print('MT: ',in_machinetype)
        print('Model: ',in_model)
        print('Year: ',in_year)
+
+      #upload file to object bucket
+#       connection.upload_fileobj(in_file,
+#         bucket_name,
+#         in_name)
 
        #Insert new row into database
 
@@ -79,4 +98,5 @@ def index():
        print('GET, writing Bucket = ',pBucketName)
        return render_template('base.html',storage=storage)
 
-app.run(host='0.0.0.0', port=8080)
+#app.run(host='0.0.0.0', port=8080)
+app.run(threaded=True)
