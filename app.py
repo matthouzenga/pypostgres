@@ -75,10 +75,7 @@ def index():
        in_year = request.form["year"]
        in_file = request.files["file1"]
 
-       print('Name: ',in_name)
-       print('MT: ',in_machinetype)
-       print('Model: ',in_model)
-       print('Year: ',in_year)
+       print('Name: ',in_name,'MT: ',in_machinetype,'Model: ',in_model, 'Year: ',in_year)
 
       #upload file to object bucket
 #       connection.upload_fileobj(in_file,
@@ -91,7 +88,9 @@ def index():
        session.add(new_storage)
        session.commit()
 
-       return redirect("/", code=302)
+       #return redirect("/", code=302)
+       storage = session.query(Storage)
+       return render_template('base.html',storage=storage)
 
     else:   #GET request
        storage = session.query(Storage)
