@@ -35,23 +35,28 @@ else:
     pBucketAccessKey = os.getenv('AWS_ACCESS_KEY_ID')
     pBucketSecretKey = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-    #connect to object bucket
-bucket_name = 'comms-architect-s3-ocp'
-bucket_host = 's3.us-south.cloud-object-storage.appdomain.cloud'
+#confirm that all environment variables were read
+if pUser and pPassword and pDatabase and pBucketHost and pBucketName and pBucketAccessKey and pBucketSecretKey:
+  print('all env variable successfully read')
+else:
+  print('some env variables were missing')
+
+#connect to object bucket
 access_key = pBucketAccessKey
 secret_key = pBucketSecretKey
-endpoint_url = 'https:://' + str(bucket_host)
-#connection = boto3.client('s3',
-#    verify=False,
-#    endpoint_url=endpoint_url,
-#    aws_access_key_id=access_key,
-#    aws_secret_access_key=secret_key)
+endpoint_url = 'https://' + str(pBucketHost)
+connection = boto3.client('s3',
+    verify=False,
+    endpoint_url=endpoint_url,
+    aws_access_key_id=access_key,
+    aws_secret_access_key=secret_key)
 
+#connect to database
 db_string = "postgresql://" + pUser + ":" + pPassword + "@postgresql:5432/" + pDatabase
-
 db = create_engine(db_string)
 base = declarative_base()
 
+#define the table 
 class Storage(base):
     __tablename__ = 'sample'
 
@@ -62,12 +67,12 @@ class Storage(base):
 
 Session = sessionmaker(db)
 session = Session()
-
-base.metadata.create_all(db)
+base.metadata.create_all(db)  #creates the table if not already defined
 
 
 @app.route('/', methods=["POST", "GET"])
 def index():
+    #handle form being submitted
     if request.method == "POST":
        in_name = request.form["name"]
        in_machinetype = request.form["machinetype"]
@@ -78,9 +83,12 @@ def index():
        print('Name: ',in_name,'MT: ',in_machinetype,'Model: ',in_model, 'Year: ',in_year)
 
       #upload file to object bucket
-#       connection.upload_fileobj(in_file,
-#         bucket_name,
-#         in_name)
+       if in_file and in_name:
+        connection.upload_fileobj(in_file,
+          pBucketName,
+          in_name)
+       else: 
+        print('no file uploaded')
 
        #Insert new row into database
 
@@ -88,13 +96,12 @@ def index():
        session.add(new_storage)
        session.commit()
 
-       #return redirect("/", code=302)
+       #return redirect("/", code=302)  #this doesn't work on PVS OCP instance for some reason
        storage = session.query(Storage)
        return render_template('base.html',storage=storage)
 
     else:   #GET request
-       storage = session.query(Storage)
-       print('GET, writing Bucket = ',pBucketName)
+       storage = session.query(Storage)    #query all rows from database
        return render_template('base.html',storage=storage)
 
 #app.run(host='0.0.0.0', port=8080)
