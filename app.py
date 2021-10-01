@@ -24,6 +24,8 @@ if AM_I_LOCAL:
     pBucketPort = os.getenv('BUCKETPORT')
     pBucketAccessKey = os.getenv('BUCKETACCESSKEY')
     pBucketSecretKey = os.getenv('BUCKETSECRETKEY')
+    endpoint_url = 'https://' + str(pBucketHost)
+
   #If in container, use the standard DB env variables set by OpenShift
 else:
     pUser = os.getenv('database-user')
@@ -34,6 +36,7 @@ else:
     pBucketPort = os.getenv('BUCKET_PORT')
     pBucketAccessKey = os.getenv('AWS_ACCESS_KEY_ID')
     pBucketSecretKey = os.getenv('AWS_SECRET_ACCESS_KEY')
+    endpoint_url = 'http://' + str(pBucketHost)
 
 #confirm that all environment variables were read
 if pUser and pPassword and pDatabase and pBucketHost and pBucketName and pBucketAccessKey and pBucketSecretKey:
@@ -44,7 +47,6 @@ else:
 #connect to object bucket
 access_key = pBucketAccessKey
 secret_key = pBucketSecretKey
-endpoint_url = 'https://' + str(pBucketHost)
 connection = boto3.client('s3',
     verify=False,
     endpoint_url=endpoint_url,
